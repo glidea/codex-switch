@@ -25,6 +25,8 @@ templates:
 
 providers:
   glidea:
+    description: 作者的小站
+    url: https://token.glidea.app
     template: responsesApi
     vars:
       BASE_URL: https://token.glidea.app

@@ -56,17 +56,34 @@ test("add profile with --config and --auth then current should be that profile",
 
 test("presets should list preset ids from yaml", () => {
   const homeDir = makeHome()
-  const yaml = `openrouter: |
-  base_url = "https://openrouter.ai/api/v1"
-glidea: |
-  base_url = "https://token.glidea.app"
+  const yaml = `templates:
+  responsesApi: |
+    base_url = "{{BASE_URL}}"
+
+providers:
+  openrouter:
+    url: https://openrouter.ai/api/v1
+    description: OpenRouter
+    template: responsesApi
+    vars:
+      BASE_URL: https://openrouter.ai/api/v1
+  glidea:
+    url: https://token.glidea.app
+    description: G
+    template: responsesApi
+    vars:
+      BASE_URL: https://token.glidea.app
 `
+  const presetsUrl = `data:text/plain,${encodeURIComponent(yaml)}`
   const result = runCli(["presets"], homeDir, {
-    CODEX_SWITCH_PRESETS_URL: `data:text/plain,${encodeURIComponent(yaml)}`,
+    CODEX_SWITCH_PRESETS_URL: presetsUrl,
     CODEX_SWITCH_PRESETS_TTL_MS: "300000"
   })
   assert.equal(result.status, 0)
-  assert.equal(result.stdout.trim(), "glidea\nopenrouter")
+  const lines = result.stdout.trim().split("\n")
+  assert.equal(lines[0], "glidea\tG\thttps://token.glidea.app")
+  assert.equal(lines[1], "openrouter\tOpenRouter\thttps://openrouter.ai/api/v1")
+  assert.equal(lines[2], `presets.yaml\t${presetsUrl}`)
 })
 
 test("add profile with --preset <id> --apikey should fetch yaml preset then use cache when ttl not expired", () => {
@@ -113,6 +130,33 @@ glidea2: |
   assert.equal(
     fs.readFileSync(path.join(homeDir, ".codex", "profiles", "router2", "auth.json"), "utf8"),
     "{\n  \"OPENAI_API_KEY\": \"sk-router-2\"\n}\n"
+  )
+})
+
+test("add profile should accept --apiKey alias", () => {
+  const homeDir = makeHome()
+  const yaml = `templates:
+  responsesApi: |
+    base_url = "{{BASE_URL}}"
+
+providers:
+  glidea:
+    template: responsesApi
+    vars:
+      BASE_URL: https://token.glidea.app
+`
+  const result = runCli(
+    ["add", "glidea", "--preset", "glidea", "--apiKey", "sk-alias"],
+    homeDir,
+    {
+      CODEX_SWITCH_PRESETS_URL: `data:text/plain,${encodeURIComponent(yaml)}`,
+      CODEX_SWITCH_PRESETS_TTL_MS: "300000"
+    }
+  )
+  assert.equal(result.status, 0)
+  assert.equal(
+    fs.readFileSync(path.join(homeDir, ".codex", "profiles", "glidea", "auth.json"), "utf8"),
+    "{\n  \"OPENAI_API_KEY\": \"sk-alias\"\n}\n"
   )
 })
 

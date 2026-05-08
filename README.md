@@ -31,32 +31,23 @@ npx @glidea/codex-switch list
 codex-switch add openai --from-current
 ```
 
-2. 查看可用预设
+2. 新建另一个配置 `glidea`
 
 ```bash
-codex-switch presets
+codex-switch add glidea
 ```
 
-3. 用预设一键新建 `glidea`
+执行后会先打开 `config.toml` 编辑  
+再打开 `auth.json` 编辑
 
-```bash
-codex-switch add glidea --preset glidea --apikey sk-xxx
-```
-
-如果不带 `--apikey` 会交互输入
-
-```bash
-codex-switch add glidea --preset glidea
-```
-
-4. 随时切换
+3. 随时切换
 
 ```bash
 codex-switch openai
 codex-switch glidea
 ```
 
-5. 切换后重启 Codex
+4. 切换后重启 Codex
 
 已运行的 Codex 会话不会热更新配置  
 重启后才会读取新配置

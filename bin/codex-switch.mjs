@@ -142,10 +142,10 @@ function parseAddOptions(addArgs) {
       i += 1
       continue
     }
-    if (token === "--apikey") {
+    if (token === "--apikey" || token === "--apiKey") {
       const value = addArgs[i + 1] || ""
       if (!value || value.startsWith("--")) {
-        fail("--apikey requires <key>")
+        fail("--apikey|--apiKey requires <key>")
       }
       apiKey = value
       i += 1
@@ -267,9 +267,25 @@ function parseTemplateProvidersYaml(yamlText) {
 
         const providerId = providerMatch[1]
         let templateId = ""
+        let providerUrl = ""
+        let providerDescription = ""
         const vars = {}
         i += 1
         while (i < lines.length && (lines[i].startsWith("    ") || lines[i] === "")) {
+          const urlLineMatch = lines[i].match(/^    url:\s*(.+?)\s*$/)
+          if (urlLineMatch) {
+            providerUrl = urlLineMatch[1].replace(/^"(.*)"$/, "$1")
+            i += 1
+            continue
+          }
+
+          const descriptionLineMatch = lines[i].match(/^    description:\s*(.+?)\s*$/)
+          if (descriptionLineMatch) {
+            providerDescription = descriptionLineMatch[1].replace(/^"(.*)"$/, "$1")
+            i += 1
+            continue
+          }
+
           const templateLineMatch = lines[i].match(/^    template:\s*(.+?)\s*$/)
           if (templateLineMatch) {
             templateId = templateLineMatch[1]
@@ -295,6 +311,8 @@ function parseTemplateProvidersYaml(yamlText) {
 
         providers[providerId] = {
           templateId,
+          url: providerUrl,
+          description: providerDescription,
           vars
         }
       }
@@ -320,7 +338,9 @@ function parseTemplateProvidersYaml(yamlText) {
 
     presets[providerId] = {
       config: renderedConfig,
-      auth: ""
+      auth: "",
+      url: provider.url || "",
+      description: provider.description || ""
     }
   }
 
@@ -492,6 +512,22 @@ function listPresetIds(presets) {
   return Object.keys(presets).sort()
 }
 
+function presetsSourceLink() {
+  const rawUrl = resolvePresetsUrl()
+  const match = rawUrl.match(
+    /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)$/
+  )
+  if (!match) {
+    return rawUrl
+  }
+
+  const owner = match[1]
+  const repo = match[2]
+  const branch = match[3]
+  const filePath = match[4]
+  return `https://github.com/${owner}/${repo}/blob/${branch}/${filePath}`
+}
+
 function renderAuthJson(apiKey) {
   const auth = {
     OPENAI_API_KEY: apiKey
@@ -567,8 +603,15 @@ async function printPresets() {
   const presets = await loadPresets()
   const ids = listPresetIds(presets)
   if (ids.length > 0) {
-    console.log(ids.join("\n"))
+    const lines = ids.map((id) => {
+      const preset = presets[id] || {}
+      const description = preset.description || ""
+      const url = preset.url || ""
+      return `${id}\t${description}\t${url}`
+    })
+    console.log(lines.join("\n"))
   }
+  console.log(`presets.yaml\t${presetsSourceLink()}`)
 }
 
 function editProfile(profileName) {

@@ -28,32 +28,23 @@ npx @glidea/codex-switch list
 codex-switch add openai --from-current
 ```
 
-2. List available presets
+2. Create another setup `glidea`
 
 ```bash
-codex-switch presets
+codex-switch add glidea
 ```
 
-3. Create `glidea` from preset
+It will open `config.toml` first  
+Then it will open `auth.json`
 
-```bash
-codex-switch add glidea --preset glidea --apikey sk-xxx
-```
-
-Without `--apikey` it asks interactively:
-
-```bash
-codex-switch add glidea --preset glidea
-```
-
-4. Switch any time
+3. Switch any time
 
 ```bash
 codex-switch openai
 codex-switch glidea
 ```
 
-5. Restart Codex after switching
+4. Restart Codex after switching
 
 An already running Codex session does not hot-reload config files  
 Restart is required to load the new profile
