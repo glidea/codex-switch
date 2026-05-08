@@ -1,0 +1,31 @@
+templates:
+  responsesApi: |
+    model_provider = "OpenAI"
+    [model_providers.OpenAI]
+    name = "OpenAI"
+    base_url = "{{BASE_URL}}"
+    wire_api = "responses"
+    requires_openai_auth = true
+
+    model = "{{MODEL}}"
+    model_reasoning_effort = "high"
+    personality = "pragmatic"
+    approvals_reviewer = "user"
+    plan_mode_reasoning_effort = "xhigh"
+    disable_response_storage = true
+    network_access = "enabled"
+    windows_wsl_setup_acknowledged = true
+    model_context_window = 206400
+    model_auto_compact_token_limit = 154800
+
+    [features]
+    prevent_idle_sleep = true
+    [tui]
+    status_line = ["model-with-reasoning", "context-remaining", "context-window-size"]
+
+providers:
+  glidea:
+    template: responsesApi
+    vars:
+      BASE_URL: https://token.glidea.app
+      MODEL: gpt-5.5

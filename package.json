@@ -1,0 +1,23 @@
+{
+  "name": "@glidea/codex-switch",
+  "version": "0.3.0",
+  "description": "Switch Codex profiles quickly",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "bin",
+    "presets.yaml",
+    "README.md",
+    "README.en.md"
+  ],
+  "bin": {
+    "codex-switch": "./bin/codex-switch.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "prepublishOnly": "npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
