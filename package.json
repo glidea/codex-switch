@@ -1,6 +1,6 @@
 {
   "name": "@glidea/codex-switch",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Switch Codex profiles quickly",
   "license": "MIT",
   "type": "module",
