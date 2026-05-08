@@ -1,12 +1,5 @@
 templates:
   responsesApi: |
-    model_provider = "OpenAI"
-    [model_providers.OpenAI]
-    name = "OpenAI"
-    base_url = "{{BASE_URL}}"
-    wire_api = "responses"
-    requires_openai_auth = true
-
     model = "{{MODEL}}"
     model_reasoning_effort = "high"
     personality = "pragmatic"
@@ -17,6 +10,13 @@ templates:
     windows_wsl_setup_acknowledged = true
     model_context_window = 206400
     model_auto_compact_token_limit = 154800
+
+    model_provider = "OpenAI"
+    [model_providers.OpenAI]
+    name = "OpenAI"
+    base_url = "{{BASE_URL}}"
+    wire_api = "responses"
+    requires_openai_auth = true
 
     [features]
     prevent_idle_sleep = true
