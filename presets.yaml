@@ -9,7 +9,6 @@ templates:
     network_access = "enabled"
     windows_wsl_setup_acknowledged = true
     model_context_window = 206400
-    model_auto_compact_token_limit = 154800
 
     model_provider = "OpenAI"
     [model_providers.OpenAI]
